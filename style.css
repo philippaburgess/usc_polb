@@ -1,0 +1,225 @@
+html, body {
+  width: 100%;
+  height: 100%; /* Ensure the body takes full viewport height */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+}
+
+header, footer {
+  background-color: #fffdd0;
+  text-align: center;
+  padding: 15px 0;
+  width: 100%;
+}
+
+header h1, header p, footer p {
+  margin: 0;
+  padding: 5px;
+}
+
+#cesiumContainer {
+  position: relative; /* Needed for absolutely positioned children */
+  flex: 1;
+  height: calc(100vh - 120px); /* Adjust based on header/footer height */
+}
+
+main {
+  flex: 1; /* Grow to use available space */
+  position: relative; /* Positioned relative to its normal position */
+}
+
+#instruction-box {
+    position: absolute; /* Position absolutely within the cesiumContainer */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Center the box */
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    border: 1px solid #ffd700; /* Yellow border */
+    padding: 20px;
+    z-index: 10;
+    max-width: 400px; /* Or any max-width you see fit */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow */
+    border-radius: 10px; /* Optional: rounds the corners */
+    text-align: center; /* Centers the text */
+}
+
+/* Adjust the button styles as needed */
+#instruction-box button {
+  padding: 10px 20px;
+  background-color: #ffd700; /* Yellow background to match the border */
+  color: #000;
+  border: none;
+  border-radius: 5px; /* Optional: rounds the button corners */
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+#instruction-box button:hover {
+  background-color: #cca300; /* Darker yellow on hover */
+}
+
+/* Styles for the slide content */
+.slide-content {
+  display: none; /* Hide all slide content by default */
+}
+
+.slide-content.active {
+  display: block; /* Show active slide content */
+}
+  
+/* Adding directional arrows next to the text */
+#slide-back:before {
+content: '< ';
+}
+
+#slide-forward:after {
+content: ' >';
+}
+
+#slide-forward {
+      display: block; /* or inline-block, as needed */
+}
+
+#slide-back {
+      display: block; /* or inline-block, as needed */
+}
+
+.slide {
+  display: none; /* Hide all slides by default */
+}
+
+.slide.active {
+  display: block; /* Only the active slide is shown */
+}
+
+#navigation-buttons {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: flex-end;
+    z-index: 10; /* High enough to be above the Cesium canvas */
+}
+
+#navigation-buttons button { /* Updated selector */
+  padding: 10px 20px;
+  background-color: #ffd700;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+#navigation-buttons button:hover { /* Updated selector */
+  background-color: #cca300;
+}
+
+#scene-container {
+    position: absolute;
+    top: 10px /* Adjust as needed for your design */
+    left: 10px; /* Adjust as needed for your design */
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    border-radius: 5px;
+    padding: 20px;
+    padding-bottom: 40px; /* Extra padding at the bottom to make space for the close button */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    z-index: 10; /* Above instruction box */
+    display: none; /* Hidden initially */
+    max-width: 900px; /* Or any max-width you see fit */
+}
+
+#scene-container p {
+  font-size: 0.9em; /* Adjust for paragraphs */
+}
+
+#scene-content ul, li {
+  font-size: 0.9em; /* Adjust the font size for list items as needed */
+}
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 5px 10px;
+  background-color: #d3d3d3;; /* Light grey background*/
+  color: #696969; /* Dark grey text */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8em; /* Smaller text size */
+  z-index: 15; /* Ensure it's above other content */
+  font-weight: bold; /* Make the 'X' bold */
+  font-family: Arial, sans-serif; /* Ensure a consistent font */
+}
+
+.close-btn:hover {
+  background-color: #a9a9a9; /* Darker grey on
+hover */
+}
+
+#scene-content h2 {
+    margin: 0; /* Add space below the title */
+    padding-right: 30px; /* Provide space for the close button */
+    color: #333; /* Dark text for readability */
+}
+
+#scene-content p {
+    margin: 0 0 20px 0; /* Add space below the paragraph */
+}
+
+#scene-content button {
+    padding: 10px 20px;
+    background-color: #ffd700; /* Yellow background to match the theme */
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#scene-content button:hover {
+    background-color: #cca300; /* Darker yellow on hover */
+}
+
+footer {
+    background-color: #fffdd0;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 0.8em; /* Adjust as needed */
+    position: relative; /* Positioned relative to its normal position */
+    width: 100%; /* Ensure the footer is full width */
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-around; /* or 'space-between' depending on your layout */
+    align-items: center;
+}
+
+.footer-section {
+    margin: 0 10px; /* Adjust spacing as needed */
+}
+
+/* If you want to use icons */
+.icon {
+    display: inline-block;
+    margin-right: 5px;
+    /* add styles for your icons here */
+}
+
+/* Responsive design for smaller screens /
+@media (max-width: 768px) {
+header h1, header p, footer p {
+max-width: 100%; / Allows some margin on smaller screens */
+body {
+        font-size: larger; /* Increase text size */
+    }
+ .my-slider {
+        padding: 20px; /* Add padding around the sliders */
+    }
+
+}
+

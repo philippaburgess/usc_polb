@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Port of Long Beach: Sustainability Analysis</title>
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Cesium.js"></script>
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+</head>
+<body>
+    <header>
+        <h1>Port of Long Beach: Sustainability Analysis</h1>
+    </header>
+
+<main>
+        <div id="cesiumContainer">
+    
+       <div id="instruction-box" class="instruction">
+        <div id="welcome-slide" class="slide active">
+            <p>Welcome! This journey will be manually navigated by you.</p>
+            <button onclick="window.nextSlide()">OK, what is next?</button>
+        </div>
+        <div id="autoplay-slide" class="slide">
+            <p>Some scenes will autoplay, but you'll need to advance manually to the next one.</p>
+            <button onclick="window.nextSlide()">Understood, continue.</button>
+        </div>
+        <div id="data-slide" class="slide">
+            <p>You can minimize text/images and explore data layers as they appear.</p>
+            <button onclick="window.closeInstructions()">Got it, let's start!</button>
+        </div>
+       </div> <!-- Closing tag for instruction-box -->
+
+    <!-- Scene Container for Displaying Scene Content -->
+<div id="scene-container" style="display: none;">
+  <div id="scene-content">
+       <button onclick="window.closeScene()" class="close-btn">X</button>
+      <!--Close button for scene-->
+    <h2 id="scene-title">Scene Title</h2>
+    <p id="scene-description">Scene description...</p>
+  </div>
+  </div> <!-- Closing tag for scene-container -->
+
+<div id="infoBox" style="display:none; position:absolute; background:white; padding:10px; border:1px solid black; z-index:100;">
+ <button onclick="document.getElementById('infoBox').style.display='none'">X</button>
+</div>
+            
+     <!-- Navigation Buttons (Previous and Next) -->
+     <div id="navigation-buttons" style="visibility: hidden;">
+        <button id="slide-back" onclick="previousScene()" style="display: none;">&lt; Previous</button>
+        <button id="slide-forward" onclick="nextScene()">Next &gt;</button>
+    </div> <!-- Closing tag for navigation-buttons -->
+        </div>
+</main>
+    <footer>
+    <div class="footer-line">
+        Created by: Philippa Burgess, Graduate Student at USC Spatial Sciences Institute
+    </div>
+    <div class="footer-line">
+        Built with Cesium and ArcGIS Pro 3.2
+    </div>
+    <div class="footer-line">
+        <a href="https://github.com/philippaburgess/polb_with_cesium">GitHub</a>
+        <span> | </span>
+        <span class="icon">📧</span><a href="mailto:pburgess@usc.edu">pburgess@usc.edu</a>
+    </div>
+    </footer>
+    <script src="app.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+
+  </body>
+</html>
+
