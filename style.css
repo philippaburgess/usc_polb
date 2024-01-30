@@ -18,11 +18,11 @@ header, footer {
 
 header h1, header p, footer p {
   margin: 0;
-  padding: 10px;
+  padding: 8px;
 }
 
 header h1 {
-  font-size: 1.3em; /* Adjust the font size down from the original size */
+  font-size: 1.4em; /* Adjust the font size down from the original size */
 }
 
 #cesiumContainer {
@@ -169,10 +169,10 @@ hover */
 }
 
 #scene-content h2 {
-    margin: 0; /* Add space below the title */
-    padding-right: 20px; /* Provide space for the close button */
+    margin: 2px; /* Add space below the title */
+    padding-right: 25px; /* Provide space for the close button */
     color: #333; /* Dark text for readability */
-    font-size: 1.0em; /
+    font-size: 1.1em; /
 }
 
 #scene-content p {
