@@ -65,6 +65,8 @@ main {
 /* Styles for the slide content */
 .slide-content {
   display: none; /* Hide all slide content by default */
+  font-size: smaller; /* Make the text smaller to fit more content */
+  padding: 10px; /* Adjust padding to create more space around the text */
 }
 
 .slide-content.active {
@@ -216,7 +218,7 @@ footer {
 header h1, header p, footer p {
 max-width: 80%; / Allows some margin on smaller screens */
 body {
-        font-size: larger; /* Increase text size */
+        font-size: smaller; /* Increase text size */
     }
  .my-slider {
         padding: 10px; /* Add padding around the sliders */
