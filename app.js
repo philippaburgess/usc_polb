@@ -211,9 +211,8 @@ orientation: {
 "<p><li>Community Engagement and Support: Through regular interaction with communities and leaders, the Port ensures that the needs of those most affected by its operations are addressed, guiding the Port's planning process.</li></p>" + 
 "<p><li>Community Grants Program: Directs funding to neighborhoods significantly impacted by Port operations, supporting a variety of projects that enhance community well-being and mitigate negative impacts.</li></p>" + 
 "<p><li>Health and Safety Initiatives: Prioritizes the health of local residents and workers by implementing air quality monitoring, pollution reduction measures, and other initiatives that safeguard public health.</li></p>" + 
-"<p><li>Educational and Workforce Development: Raises awareness about its operations and offers training programs, empowering the local workforce and strengthening community ties.
-</li></p>" + 
-                "</ul>",
+"<p><li>Educational and Workforce Development: Raises awareness about its operations and offers training programs, empowering the local workforce and strengthening community ties.</li></p>" + 
+"</ul>",
 destination: Cesium.Cartesian3.fromDegrees(-118.234, 33.705, 3800), // Adjusted coordinates for the desired view
 orientation: {
   heading: Cesium.Math.toRadians(0), // Zero for north
