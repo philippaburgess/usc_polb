@@ -228,7 +228,7 @@ orientation: {
 "<p><li>Engagement with Environmental Programs: Actively participate in clean-up efforts and educational activities organized by the Port, contributing to environmental preservation.</p></li>" + 
 "<p><li>Sustainable Lifestyle Choices: Embrace environmentally conscious daily practices to reduce personal environmental impact, such as energy conservation and recycling.</p></li>" + 
 "<p><li>Policy Advocacy: Advocate for clean air and water initiatives by reaching out to local, state, and federal officials, expressing concerns and supporting positive environmental policies.</p></li>" + 
-"<p><li>Education and Outreach: Stay informed about environmental issues and actively spread awareness, encouraging others to adopt. </p></li>" + 
+"<p><li>Education and Outreach: Stay informed about environmental issues and actively spread awareness, encouraging others to adopt.</p></li>" + 
 "</ul>", 
 destination: Cesium.Cartesian3.fromDegrees(-118.225, 33.650, 8000), // Coordinates over the Port of Long Beach
 orientation: {
