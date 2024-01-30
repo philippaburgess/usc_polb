@@ -170,7 +170,7 @@ hover */
 
 #scene-content h2 {
     margin: 0; /* Add space below the title */
-    padding-right: 30px; /* Provide space for the close button */
+    padding-right: 20px; /* Provide space for the close button */
     color: #333; /* Dark text for readability */
     font-size: 1.0em; /
 }
