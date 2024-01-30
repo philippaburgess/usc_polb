@@ -12,13 +12,17 @@ html, body {
 header, footer {
   background-color: #fffdd0;
   text-align: center;
-  padding: 15px 0;
+  padding: 10px 0;
   width: 100%;
 }
 
 header h1, header p, footer p {
   margin: 0;
   padding: 5px;
+}
+
+header h1 {
+  font-size: 1.5em; /* Adjust the font size down from the original size */
 }
 
 #cesiumContainer {
@@ -168,10 +172,12 @@ hover */
     margin: 0; /* Add space below the title */
     padding-right: 30px; /* Provide space for the close button */
     color: #333; /* Dark text for readability */
+    font-size: 1.2em; /
 }
 
 #scene-content p {
-    margin: 0 0 20px 0; /* Add space below the paragraph */
+    margin: 0 0 5px 0; /* Add space below the paragraph */
+   font-size: 0.9em; 
 }
 
 #scene-content button {
