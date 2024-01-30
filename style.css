@@ -6,6 +6,7 @@ html, body {
   display: flex;
   flex-direction: column; /* Stack elements vertically */
   overflow-x: hidden; /* Hide horizontal scrollbar */
+  overflow-y: auto
 }
 
 header, footer {
@@ -213,12 +214,12 @@ footer {
 /* Responsive design for smaller screens /
 @media (max-width: 768px) {
 header h1, header p, footer p {
-max-width: 100%; / Allows some margin on smaller screens */
+max-width: 80%; / Allows some margin on smaller screens */
 body {
         font-size: larger; /* Increase text size */
     }
  .my-slider {
-        padding: 20px; /* Add padding around the sliders */
+        padding: 10px; /* Add padding around the sliders */
     }
 
 }
