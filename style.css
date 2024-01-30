@@ -18,11 +18,11 @@ header, footer {
 
 header h1, header p, footer p {
   margin: 0;
-  padding: 5px;
+  padding: 10px;
 }
 
 header h1 {
-  font-size: 1.5em; /* Adjust the font size down from the original size */
+  font-size: 1.3em; /* Adjust the font size down from the original size */
 }
 
 #cesiumContainer {
@@ -70,7 +70,7 @@ main {
 .slide-content {
   display: none; /* Hide all slide content by default */
   font-size: smaller; /* Make the text smaller to fit more content */
-  padding: 10px; /* Adjust padding to create more space around the text */
+  padding: 5px; /* Adjust padding to create more space around the text */
 }
 
 .slide-content.active {
@@ -131,8 +131,8 @@ content: ' >';
     left: 10px; /* Adjust as needed for your design */
     background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
     border-radius: 5px;
-    padding: 20px;
-    padding-bottom: 40px; /* Extra padding at the bottom to make space for the close button */
+    padding: 10px;
+    padding-bottom: 10px; /* Extra padding at the bottom to make space for the close button */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
     z-index: 10; /* Above instruction box */
     display: none; /* Hidden initially */
@@ -172,7 +172,7 @@ hover */
     margin: 0; /* Add space below the title */
     padding-right: 30px; /* Provide space for the close button */
     color: #333; /* Dark text for readability */
-    font-size: 1.2em; /
+    font-size: 1.0em; /
 }
 
 #scene-content p {
