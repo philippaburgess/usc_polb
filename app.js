@@ -259,51 +259,96 @@ orientation: {
         },
             
 ];
-
 // Section 3
 
 var longBeachDataLayer;
 var heatmapImageryProvider;
-
 const airQualityApiKey = 'AIzaSyAQ76encI5EJ6UK3ykhdMwO6fxU9495xBg'; // Replace with your actual API key
 const airQualityMapType = 'US_AQI'; // The type of heatmap to return
-
-function updateAirQualityData() {
-  try {
-    const airQualitySceneIndex = 7; // Index for Scene 8
-    console.log('Current scene index:', currentSceneIndex);
-   
-    if (currentSceneIndex === airQualitySceneIndex) {
-         console.log('In Air Quality Scene'); // Log if in Air Quality scene
-        
-        if (!heatmapImageryProvider) {
-              console.log('Creating new heatmap imagery provider'); // Log when creating a new provider
-            heatmapImageryProvider = new Cesium.UrlTemplateImageryProvider({
-                  url: `https://airquality.googleapis.com/v1/mapTypes/${airQualityMapType}/heatmapTiles/{z}/{x}/{y}?key=${airQualityApiKey}`
-            });
-            viewer.imageryLayers.addImageryProvider(heatmapImageryProvider);
-      }
-    } else if (heatmapImageryProvider && viewer.imageryLayers.contains(heatmapImageryProvider)) {
-        console.log('Removing heatmap imagery provider from viewer'); // Log when removing provider from viewer
-        viewer.imageryLayers.remove(heatmapImageryProvider);
-        heatmapImageryProvider = null; // Clear the reference
-    }
-    } catch (error) {
-        console.error('Error updating air quality data:', error);
-    }
-}
+var toggleButton = document.getElementById('toggleAirQuality'); // Access the toggle button once var toggleButton = document.getElementById('toggleAirQuality');
+var airQualityButtonShown = false;
+var heatmapLayer;
+    
+function setSceneContent(scene) {
+      document.getElementById('scene-title').textContent = scene.title;
+      document.getElementById('scene-description').innerHTML = scene.content;
+      document.getElementById('scene-container').style.display = 'block';
+ }
     
 function updateScene() {
     var scene = scenes[currentSceneIndex];
-    var titleElement = document.getElementById('scene-title');
-    var contentElement = document.getElementById('scene-description');
-    var sceneContainer = document.getElementById('scene-container');
+    setSceneContent(scene);
+    manageHeatmapVisibility(currentSceneIndex);
+    flyToScene(scene);
+}
 
-   if(titleElement && contentElement && sceneContainer) {
-        titleElement.textContent = scene.title;
-        contentElement.innerHTML = scene.content;
-        sceneContainer.style.display = 'block'; // Make sure the container is visible
+function manageHeatmapVisibility(sceneIndex) {
+    const airQualitySceneIndex = 7; // Scene 8 is where air quality data starts showing
 
+    // Hide the heatmap by default
+    if (heatmapImageryProvider) {
+        heatmapImageryProvider.show = false;
+    }
+    
+    // Show the toggle button from Scene 8 onwards
+    toggleButton.style.display = sceneIndex >= airQualitySceneIndex ? 'block' : 'none';
+    
+    // If it's Scene 8 or beyond, make sure the heatmap layer is added, shown only for Scene 8
+    if (sceneIndex >= airQualitySceneIndex) {
+        if (!heatmapImageryProvider) {
+            addHeatmapLayer();
+        }
+        if (sceneIndex === airQualitySceneIndex) {
+            heatmapImageryProvider.show = true;
+        }
+        airQualityButtonShown = true; // Indicate that the button has been shown
+    }
+    
+    // Update button text based on the current visibility state of the heatmap
+    toggleButton.textContent = heatmapImageryProvider && heatmapImageryProvider.show ? 'Hide Air Quality' : 'Show Air Quality';
+}
+
+function toggleHeatmap() {
+    console.log('toggleHeatmap called'); // Check if function is called
+    if (heatmapLayer) {
+        console.log('Removing heatmap layer');
+        viewer.imageryLayers.remove(heatmapLayer, true);
+        heatmapLayer = null;
+        toggleButton.textContent = 'Show Air Quality';
+    } else {
+        console.log('Adding heatmap layer');
+        heatmapLayer = viewer.imageryLayers.addImageryProvider(heatmapImageryProvider);
+        toggleButton.textContent = 'Hide Air Quality';
+    }
+}
+    
+function addHeatmapLayer() {
+    if (!heatmapImageryProvider) {
+        heatmapImageryProvider = new Cesium.UrlTemplateImageryProvider({
+            url: `https://airquality.googleapis.com/v1/mapTypes/${airQualityMapType}/heatmapTiles/{z}/{x}/{y}?key=${airQualityApiKey}`
+        });
+        // Keep a reference to the layer object
+        heatmapLayer = viewer.imageryLayers.addImageryProvider(heatmapImageryProvider);
+    }
+} // This closing bracket was missing in your snippet
+
+function removeHeatmapLayer() {
+    if (heatmapLayer) {
+        // Use the reference to remove the correct layer
+        viewer.imageryLayers.remove(heatmapLayer, true);
+        heatmapImageryProvider = null;
+        heatmapLayer = null; // Make sure to clear the reference
+    }
+}
+    
+//    if (heatmapImageryProvider) {
+//         viewer.imageryLayers.remove(heatmapImageryProvider, true); 
+//        heatmapImageryProvider = null;
+//        toggleButton.textContent = 'Show Air Quality'; // Update button text
+//    }
+// }
+
+    
 if (currentSceneIndex === 12) { // Scene index starts at 0, so index 12 is Scene 13
         if (!longBeachDataLayer) {
            Cesium.GeoJsonDataSource.load('https://raw.githubusercontent.com/philippaburgess/polb_with_cesium/main/Long_Beach_Com_JSON_NEWEST.geojson')
@@ -336,16 +381,17 @@ if (currentSceneIndex === 12) { // Scene index starts at 0, so index 12 is Scene
             }
         }
 
-        viewer.camera.flyTo({
-            destination: scene.destination,
-            orientation: scene.orientation,
-            duration: 2  // Duration of the camera flight in seconds
-        });
-   } else {
-        console.error("Scene title or content element not found!");  // Error log if elements are not found
-    }
-}  
+    // Function to navigate to the specified scene
+function flyToScene(scene) {
+    viewer.camera.flyTo({
+        destination: scene.destination,
+        orientation: scene.orientation,
+        duration: 2 // Adjust the duration as needed
+    });
+}
 
+    
+// Ensure this code runs after the document has loaded to guarantee the toggleButton element is accessible
     
 // Section 4 
 
@@ -440,20 +486,27 @@ window.closeScene = function() {
 
 // Section 6 
 
-    
 window.addEventListener('load', function() {
    slides = document.querySelectorAll('.slide');
+});
+document.addEventListener('DOMContentLoaded', function() {
+    toggleButton = document.getElementById('toggleAirQuality');
+    if (toggleButton) {
+        toggleButton.addEventListener('click', toggleHeatmap);
+        manageHeatmapVisibility(currentSceneIndex);
+    }
+    
+    // Activate the first slide if any are present
+    var slides = document.querySelectorAll('.slide');
+    if (slides.length > 0) {
+        slides[0].classList.add('active');
+    }
     
     // Hide the navigation buttons initially
     document.getElementById('navigation-buttons').style.visibility = 'hidden';
     document.getElementById('slide-forward').style.display = 'none'; // Hide the "Next" button
     document.getElementById('slide-back').style.display = 'none'; // Hide the "Previous" button
-
-// Activate the first slide if any are present
-       if (slides.length > 0) {
-            slides[0].classList.add('active');
-        }
-    });
+});
 // Define next slide function
 window.nextSlide = function() {
    console.log('Current Slide Index:', currentSlideIndex);
