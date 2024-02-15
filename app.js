@@ -25,6 +25,8 @@
     navigationHelpButton: false, // Don't show the navigation help button
 });
 
+viewer.scene.globe.enableLighting = true;
+
       // Section 2: Scene and Location Setup
     // Define your locations array here as before
 
@@ -262,140 +264,186 @@ orientation: {
 ];
     
 
+
 // Section 3
 
 var longBeachDataLayer;
-var heatmapImageryProvider;
+var portTerminalLayer; 
+
 const airQualityApiKey = 'AIzaSyAQ76encI5EJ6UK3ykhdMwO6fxU9495xBg'; // Replace with your actual API key
 const airQualityMapType = 'US_AQI'; // The type of heatmap to return
-var toggleButton = document.getElementById('toggleAirQuality'); // Access the toggle button once var toggleButton = document.getElementById('toggleAirQuality');
-var airQualityButtonShown = false;
+
+var heatmapImageryProvider = new Cesium.UrlTemplateImageryProvider({
+    url: `https://airquality.googleapis.com/v1/mapTypes/${airQualityMapType}/heatmapTiles/{z}/{x}/{y}?key=${airQualityApiKey}`
+});
 var heatmapLayer;
+var heatmapVisible = false;    
+var toggleButton; 
+var airQualitySceneIndex = 7; // Scene 8 is where air quality data starts showing
+
+var flyToBathymetricView;
+
+var bathymetryTerrainProvider = new Cesium.CesiumTerrainProvider({
+    url: Cesium.IonResource.fromAssetId(2426648) // Replace with your actual bathymetry asset ID
+});
+var defaultTerrainProvider = new Cesium.EllipsoidTerrainProvider({});
     
 function setSceneContent(scene) {
       document.getElementById('scene-title').textContent = scene.title;
       document.getElementById('scene-description').innerHTML = scene.content;
       document.getElementById('scene-container').style.display = 'block';
  }
-    
-function updateScene() {
-    var scene = scenes[currentSceneIndex];
-    setSceneContent(scene);
-    manageHeatmapVisibility(currentSceneIndex);
-    flyToScene(scene);
-}
 
 function manageHeatmapVisibility(sceneIndex) {
-    const airQualitySceneIndex = 7; // Scene 8 is where air quality data starts showing
-
-    // Hide the heatmap by default
-    if (heatmapImageryProvider) {
-        heatmapImageryProvider.show = false;
+  if (sceneIndex >= airQualitySceneIndex) {
+    // Show the button if we're at or past the scene where it's introduced
+    toggleButton.style.display = 'block';
+    // Show the heatmap by default only on Scene 8, but leave it as is for other scenes
+    if (sceneIndex === airQualitySceneIndex && !heatmapVisible) {
+      window.toggleHeatmap();
     }
-    
-    // Show the toggle button from Scene 8 onwards
-    toggleButton.style.display = sceneIndex >= airQualitySceneIndex ? 'block' : 'none';
-    
-    // If it's Scene 8 or beyond, make sure the heatmap layer is added, shown only for Scene 8
-    if (sceneIndex >= airQualitySceneIndex) {
-        if (!heatmapImageryProvider) {
-            addHeatmapLayer();
-        }
-        if (sceneIndex === airQualitySceneIndex) {
-            heatmapImageryProvider.show = true;
-        }
-        airQualityButtonShown = true; // Indicate that the button has been shown
+  } else {
+    // If we navigate back before Scene 8, hide the heatmap but keep the button visible
+    if (heatmapVisible) {
+      window.toggleHeatmap();
     }
-    
-    // Update button text based on the current visibility state of the heatmap
-    toggleButton.textContent = heatmapImageryProvider && heatmapImageryProvider.show ? 'Hide Air Quality' : 'Show Air Quality';
+  }
 }
-
-function toggleHeatmap() {
-    console.log('toggleHeatmap called'); // Check if function is called
+   function toggleHeatmap() {
+ heatmapVisible = !heatmapVisible;
+  if (heatmapVisible) {
+    if (!heatmapLayer) {
+      heatmapLayer = viewer.imageryLayers.addImageryProvider(heatmapImageryProvider);
+    }
+    toggleButton.textContent = 'Hide Air Quality';
+  } else {
     if (heatmapLayer) {
-        console.log('Removing heatmap layer');
-        viewer.imageryLayers.remove(heatmapLayer, true);
-        heatmapLayer = null;
-        toggleButton.textContent = 'Show Air Quality';
-    } else {
-        console.log('Adding heatmap layer');
-        heatmapLayer = viewer.imageryLayers.addImageryProvider(heatmapImageryProvider);
-        toggleButton.textContent = 'Hide Air Quality';
+      viewer.imageryLayers.remove(heatmapLayer);
+      heatmapLayer = null;
     }
+    toggleButton.textContent = 'Show Air Quality';
+  }
+}
+
+function setDefaultTerrain() {
+    viewer.scene.terrainProvider = defaultTerrainProvider;
 }
     
-function addHeatmapLayer() {
-    if (!heatmapImageryProvider) {
-        heatmapImageryProvider = new Cesium.UrlTemplateImageryProvider({
-            url: `https://airquality.googleapis.com/v1/mapTypes/${airQualityMapType}/heatmapTiles/{z}/{x}/{y}?key=${airQualityApiKey}`
-        });
-        // Keep a reference to the layer object
-        heatmapLayer = viewer.imageryLayers.addImageryProvider(heatmapImageryProvider);
-    }
-} // This closing bracket was missing in your snippet
-
-function removeHeatmapLayer() {
-    if (heatmapLayer) {
-        // Use the reference to remove the correct layer
-        viewer.imageryLayers.remove(heatmapLayer, true);
-        heatmapImageryProvider = null;
-        heatmapLayer = null; // Make sure to clear the reference
-    }
+function setBathymetryTerrain() {
+    viewer.scene.terrainProvider = bathymetryTerrainProvider;
 }
-    
-//    if (heatmapImageryProvider) {
-//         viewer.imageryLayers.remove(heatmapImageryProvider, true); 
-//        heatmapImageryProvider = null;
-//        toggleButton.textContent = 'Show Air Quality'; // Update button text
-//    }
-// }
 
-    
-if (currentSceneIndex === 12) { // Scene index starts at 0, so index 12 is Scene 13
-        if (!longBeachDataLayer) {
-           Cesium.GeoJsonDataSource.load('https://raw.githubusercontent.com/philippaburgess/polb_with_cesium/main/Long_Beach_Com_JSON_NEWEST.geojson')
-            .then(function(dataSource) {
-                    viewer.dataSources.add(dataSource);
-                    longBeachDataLayer = dataSource;
-                    var entities = dataSource.entities.values;
-
-    for (var i = 0; i < entities.length; i++) {
-        var entity = entities[i];
-        if (entity.properties) {
-            // Create a description from the properties
-            var description = '<table class="cesium-infoBox-defaultTable"><tbody>';
-            entity.properties.propertyNames.forEach(function(propertyName) {
-                var value = entity.properties[propertyName];
-                description += '<tr><th>' + propertyName + '</th><td>' + value + '</td></tr>';
-             });
-               description += '</tbody></table>';
-                entity.description = description; // InfoBox will use this
-             }
-        }
-      }).catch(function(error) {
-        console.error(error);
-                });
-            }     
-        } else {
-            if (longBeachDataLayer) {
-                viewer.dataSources.remove(longBeachDataLayer);
-                longBeachDataLayer = null;
-            }
-        }
-
-    // Function to navigate to the specified scene
-function flyToScene(scene) {
+function flyToBathymetricView() {
+    // Fly to the above water location first
     viewer.camera.flyTo({
-        destination: scene.destination,
-        orientation: scene.orientation,
-        duration: 2 // Adjust the duration as needed
+        destination: Cesium.Cartesian3.fromDegrees(-120.0, 31.1, 240000),
+        orientation: {
+            heading: Cesium.Math.toRadians(45),
+            pitch: Cesium.Math.toRadians(-45),
+            roll: 0.0
+        },
+        duration: 8,
+        complete: function() {
+            // After arriving at the above water location, fly to underwater
+            viewer.camera.flyTo({
+                destination: Cesium.Cartesian3.fromDegrees(-118.2140, 33.7320, -10),
+                orientation: {
+                    heading: Cesium.Math.toRadians(0),
+                    pitch: Cesium.Math.toRadians(0), // Slightly tilted down for underwater view
+                    roll: 0.0
+                },
+                duration: 4
+            });
+        }
     });
 }
+ 
+function updateScene(sceneIndex) {
+    if (typeof sceneIndex === 'undefined') {
+        sceneIndex = currentSceneIndex;
+    }
 
+    if (sceneIndex < 0 || sceneIndex >= scenes.length) {
+        console.error('Invalid sceneIndex:', sceneIndex);
+        return;
+    }
+
+    currentSceneIndex = sceneIndex;
+    var scene = scenes[sceneIndex];
+
+    setSceneContent(scene);
+    manageHeatmapVisibility(sceneIndex);
+    checkSceneForGeoJsonLayers(sceneIndex);
+
+    if (sceneIndex === 5) {
+        flyToBathymetricView();
+    } else {
+        setDefaultTerrain();
+        // Fly to the scene's designated view
+        viewer.camera.flyTo({
+            destination: scene.destination,
+            orientation: scene.orientation,
+            duration: 2
+        });
+    }
+}
+const portTerminalsGeoJsonUrl = 'https://raw.githubusercontent.com/philippaburgess/polb_with_cesium/main/PortTerminals_JSON.geojson';
+const longBeachGeoJsonUrl = 'https://raw.githubusercontent.com/philippaburgess/polb_with_cesium/main/Long_Beach_Com_JSON_NEWEST.geojson';
+
+function loadPortTerminalsDataLayer() {
+    Cesium.GeoJsonDataSource.load(portTerminalsGeoJsonUrl)
+        .then(function(dataSource) {
+            viewer.dataSources.add(dataSource);
+            portTerminalLayer = dataSource;
+            // Optionally set some properties like name, show, etc.
+            portTerminalLayer.name = 'Port Terminals';
+            portTerminalLayer.show = true;
+        }).catch(function(error) {
+            console.error('Error loading Port Terminals GeoJSON:', error);
+        });
+}
     
-// Ensure this code runs after the document has loaded to guarantee the toggleButton element is accessible
-    
+// Function to load the Long Beach data layer
+function loadLongBeachDataLayer() {
+    Cesium.GeoJsonDataSource.load(longBeachGeoJsonUrl)
+        .then(function(dataSource) {
+            viewer.dataSources.add(dataSource);
+            longBeachDataLayer = dataSource;
+        }).catch(function(error) {
+            console.error('Error loading Long Beach GeoJSON:', error);
+        });
+}
+
+// Function to load GeoJson layers based on scene
+function checkSceneForGeoJsonLayers(sceneIndex) {
+  // Check if the current scene is the Port Terminals scene
+  if (sceneIndex === 2) {
+    if (!portTerminalLayer) {
+      loadPortTerminalsDataLayer(); // Corrected function name
+    }
+  } else {
+    // If we are not in the Port Terminals scene, remove the layer if it exists
+    if (portTerminalLayer) {
+      viewer.dataSources.remove(portTerminalLayer);
+      portTerminalLayer = null;
+    }
+  }
+  
+  // Check if the current scene is the Long Beach Data scene
+  if (sceneIndex === 12) {
+    if (!longBeachDataLayer) {
+      loadLongBeachDataLayer();
+    }
+  } else {
+    // If we are not in the Long Beach Data scene, remove the layer if it exists
+    if (longBeachDataLayer) {
+      viewer.dataSources.remove(longBeachDataLayer);
+      longBeachDataLayer = null;
+    }
+  }
+}
+    // Function to navigate to the specified scene
+
 // Section 4 
 
     function displayInfoBox(pickedFeature) {        
@@ -417,33 +465,50 @@ for (var key in properties) {
     }
 }
 
+window.toggleHeatmap = function() {
+ heatmapVisible = !heatmapVisible; // Toggle the heatmap visibility state
+    if (heatmapVisible) {
+        if (!heatmapLayer) {
+            // Add the heatmap layer if it doesn't exist
+            heatmapLayer = viewer.imageryLayers.addImageryProvider(heatmapImageryProvider);
+        }
+        toggleButton.textContent = 'Hide Air Quality';
+        toggleButton.classList.add('on'); // Add class 'on' to represent the active state
+    } else {
+        if (heatmapLayer) {
+            // Remove the heatmap layer if it exists
+            viewer.imageryLayers.remove(heatmapLayer);
+            heatmapLayer = null;
+        }
+        toggleButton.textContent = 'Show Air Quality';
+        toggleButton.classList.remove('on'); // Remove class 'on' to represent the inactive state
+    }
+};
+
 window.nextScene = function() {
-    if (currentSceneIndex < scenes.length - 1) {
+      if (currentSceneIndex < scenes.length - 1) {
         currentSceneIndex++;
-        updateScene();
-    document.getElementById('scene-container').style.display = 'block';
+        updateScene(currentSceneIndex); // Apply the new scene changes
         document.getElementById('slide-back').style.display = 'block'; // Show 'Previous' button
         document.getElementById('slide-forward').style.display = 'block'; // Ensure 'Next' button is visible unless it's the last scene
     }
+    // Hide 'Next' button at the last scene
     if (currentSceneIndex === scenes.length - 1) {
-        document.getElementById('slide-forward').style.display = 'none'; // Hide 'Next' button in the last scene
+        document.getElementById('slide-forward').style.display = 'none';
     }
 };
 
 window.previousScene = function() {
-    if (currentSceneIndex > 0) {
+ if (currentSceneIndex > 0) {
         currentSceneIndex--;
-        updateScene();
-        
-        document.getElementById('scene-container').style.display = 'block';
+        updateScene(currentSceneIndex); // Apply the new scene changes
         document.getElementById('slide-forward').style.display = 'block'; // Show 'Next' button
-
-         if (currentSceneIndex === 0) {
-            document.getElementById('slide-back').style.display = 'none'; // Hide 'Previous' button
-        } else {
-            // If we are not at the first scene, ensure the 'Previous' button is visible
-            document.getElementById('slide-back').style.display = 'block';
-        }
+    }
+    // Hide 'Previous' button at the first scene
+    if (currentSceneIndex === 0) {
+        document.getElementById('slide-back').style.display = 'none';
+    } else {
+        document.getElementById('slide-back').style.display = 'block'; // Show 'Previous' button if not the first scene
     }
 };
 
@@ -454,6 +519,8 @@ function showSceneContainer() {
         sceneContainer.style.display = 'block';
     }
 }
+
+    
 // Section 5
 
     function onFlyoverComplete() {
@@ -487,34 +554,32 @@ window.closeScene = function() {
     // Optional: Add logic to navigate back to the main view or do nothing
 };
 
-// Section 6 
+    // Section 6
+    // This event listener is better placed outside the IIFE
+    window.addEventListener('load', function() {
+        slides = document.querySelectorAll('.slide');
+    });
 
-window.addEventListener('load', function() {
-   slides = document.querySelectorAll('.slide');
-});
-document.addEventListener('DOMContentLoaded', function() {
-    toggleButton = document.getElementById('toggleAirQuality');
+    document.addEventListener('DOMContentLoaded', function() {
+  toggleButton = document.getElementById('toggleAirQuality');
     if (toggleButton) {
-        toggleButton.addEventListener('click', toggleHeatmap);
-        manageHeatmapVisibility(currentSceneIndex);
+        toggleButton.addEventListener('click', window.toggleHeatmap);
     }
-    
-    // Activate the first slide if any are present
-    var slides = document.querySelectorAll('.slide');
+
+    // Initialize slides and set the first slide to active, if any are present
+    slides = document.querySelectorAll('.slide');
     if (slides.length > 0) {
         slides[0].classList.add('active');
     }
-    
+
     // Hide the navigation buttons initially
     document.getElementById('navigation-buttons').style.visibility = 'hidden';
-    document.getElementById('slide-forward').style.display = 'none'; // Hide the "Next" button
-    document.getElementById('slide-back').style.display = 'none'; // Hide the "Previous" button
+    document.getElementById('slide-forward').style.display = 'none';
+    document.getElementById('slide-back').style.display = 'none';
 });
+
 // Define next slide function
 window.nextSlide = function() {
-   console.log('Current Slide Index:', currentSlideIndex);
-   console.log('Slides Length:', slides.length);
-    
    if (currentSlideIndex < scenes.length - 1) {
         slides[currentSlideIndex].classList.remove('active');
    }
@@ -525,14 +590,13 @@ window.nextSlide = function() {
    } else {
             console.error('No slide exists at index:', currentSlideIndex);
         }
-};
-    // Define the function to move to the next slide
-
- // Define the function to close the instructions and start the flyover
+}
 window.closeInstructions = function() {
     // Hide the instruction box
     document.getElementById('instruction-box').style.display = 'none';
     // Start the flyover sequence
     flyToLocationAndHold(0); // Ensure this function is defined elsewhere
-      };
+};
+
+    
  })();
